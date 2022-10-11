@@ -729,8 +729,12 @@ def labels_to_class_weights(labels, nc=80):
 
     weights[weights == 0] = 1  # replace empty bins with 1
     weights = 1 / weights  # number of targets per class
+    temp_list = [0] + weights
+    for i in range(1, len(temp_list)):
+        temp_list[i] += temp_list[i - 1]
+    count = temp_list[-1]
     weights /= weights.sum()  # normalize
-    return torch.from_numpy(weights).float()
+    return torch.from_numpy(weights*count).float()
 
 
 def labels_to_image_weights(labels, nc=80, class_weights=np.ones(80)):
